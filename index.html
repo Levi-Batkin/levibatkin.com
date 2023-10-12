@@ -117,6 +117,7 @@
             <div class="links"><a href="https://levibatkin.com/projects">Projects</a></div><a href="https://levibatkin.com/cv">CV</a><a href="https://levibatkin.com/contact-me">Contact me</a>
             <div class="social-icons"><a href="https://www.facebook.com/levibatkin/"><i class="icon ion-social-facebook"></i></a><a href="https://www.instagram.com/levibatkin1/"><i class="icon ion-social-instagram-outline"></i></a><a href="https://www.linkedin.com/in/levibatkin/"><i class="icon ion-social-linkedin-outline"></i></a></div>
             <p id="locationResult"></p>
+            <p id="ipAddress"></p>
         </div>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -142,6 +143,20 @@
         } else {
             locationResult.textContent = "Geolocation is not supported by your browser.";
         }
+    </script>
+    <script>
+        const ipAddressElement = document.getElementById("ipAddress");
+
+        // Use a service like ipinfo.io to get the user's IP address
+        fetch('https://ipinfo.io?token=YOUR_API_TOKEN')
+            .then(response => response.json())
+            .then(data => {
+                const ip = data.ip;
+                ipAddressElement.textContent = `Your IP address is: ${ip}`;
+            })
+            .catch(error => {
+                ipAddressElement.textContent = `Error: Unable to fetch IP address - ${error}`;
+            });
     </script>
 </body>
 
