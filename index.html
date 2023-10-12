@@ -116,12 +116,33 @@
         <div class="container">
             <div class="links"><a href="https://levibatkin.com/projects">Projects</a></div><a href="https://levibatkin.com/cv">CV</a><a href="https://levibatkin.com/contact-me">Contact me</a>
             <div class="social-icons"><a href="https://www.facebook.com/levibatkin/"><i class="icon ion-social-facebook"></i></a><a href="https://www.instagram.com/levibatkin1/"><i class="icon ion-social-instagram-outline"></i></a><a href="https://www.linkedin.com/in/levibatkin/"><i class="icon ion-social-linkedin-outline"></i></a></div>
+            <p id="locationResult"></p>
         </div>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
     <script src="/assets/js/theme.js?h=aeddb9c3ce5d77b8278c91c07acf30ad"></script>
+    <script>
+        // Check if Geolocation is supported by the browser
+        if ("geolocation" in navigator) {
+            const locationResult = document.getElementById("locationResult");
+
+            // Request location permission when the page loads
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    locationResult.textContent = `Your location is: Latitude ${latitude}, Longitude ${longitude}`;
+                },
+                (error) => {
+                    locationResult.textContent = `Error: ${error.message}`;
+                }
+            );
+        } else {
+            locationResult.textContent = "Geolocation is not supported by your browser.";
+        }
+    </script>
 </body>
 
 </html>
