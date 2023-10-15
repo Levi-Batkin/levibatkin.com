@@ -20,9 +20,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css">
     <link rel="stylesheet" href="assets/css/particles.css">
+    <link rel="stylesheet" href="assets/css/splash.css">
 </head>
 
 <body class="text-secondary">
+    <div class="splash-screen">
+        <div class="loader"></div>
+        <p>Loading...</p>
+    </div>
     <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
         <div class="container"><a class="navbar-brand logo" href="#">Levi Batkin | Portfolio</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navbarNav"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -159,6 +164,14 @@
             .catch(error => {
                 ipAddressElement.textContent = ``;
             });
+    </script>
+    <script>
+        // Simulate loading time
+        setTimeout(function() {
+            // Hide the splash screen and show the content
+            document.querySelector(".splash-screen").style.display = "none";
+            document.querySelector(".page-content").style.display = "block";
+        }, 2000);
     </script>
 </div>
 
