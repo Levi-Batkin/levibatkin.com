@@ -49,139 +49,22 @@
     <main class="page hire-me-page">
         <section class="py-5">
             <div class="container py-5">
-                <div class="row mb-5">
-                    <div class="col-md-8 col-xl-6 text-center mx-auto">
-                        <p class="fw-bold text-success mb-2">Contacts</p>
-                        <h2 class="fw-bold">How you can reach us</h2>
-                    </div>
-                </div>
-                <div class="row d-flex justify-content-center">
-                    <div class="col-md-4 col-xl-4">
-                        <div class="flex items-center min-h-screen bg-gray-50 dark:bg-gray-900">
-                            <div class="container mx-auto">
-                            <div>
-                              <div class="text-center">
-                                <h1 class="my-3 text-3xl font-semibold text-gray-700 dark:text-gray-200">
-                                  Contact Us
-                                </h1>
-                                <p class="text-gray-400 dark:text-gray-400">
-                                  Fill up the form below to send us a message.
-                                </p>
-                              </div>
-                              <div class="m-7">
-                                <div>
-  <link rel="stylesheet" href="https://cdn.formbold.com/formbold.css" />
-  <br />
-  <div class="formbold-builder-form themeOne">
-    <form
-      enctype="multipart/form-data"
-      action="https://formbold.com/s/602mz"
-      method="POST"
-      class="mx-auto w-full max-w-[570px] rounded-[10px] border border-stroke bg-white p-10 themeOne"
-    >
-      <div class="SortableItem fb-builder-item">
-        <div class="mb-4">
-          <label class="mb-2.5 block text-base text-black"
-            ><span>Full Name</span
-            ><span class="label-required pl-1 text-red-400">*</span></label
-          ><input
-            type="text"
-            class="w-full rounded border border-stroke bg-white px-5 py-3 text-base text-black outline-none focus:border-primary"
-            name="text_input_94B4F409-6F79-40AC-9B67-B2F6745A1E7D"
-            placeholder="John Doe"
-            value=""
-            required=""
-          />
-        </div>
-      </div>
-      <div class="SortableItem fb-builder-item">
-        <div class="mb-4">
-          <label class="mb-2.5 block text-base text-black"
-            ><span>E-Mail</span
-            ><span class="label-required pl-1 text-red-400">*</span></label
-          ><input
-            type="email"
-            class="w-full rounded border border-stroke bg-white px-5 py-3 text-base text-black outline-none focus:border-primary"
-            name="email_input_8F1CDCC5-E8CF-4639-A6D1-D3D024BF4CC8"
-            placeholder="Enter Email Address"
-            value=""
-            required=""
-          />
-        </div>
-      </div>
-      <div class="SortableItem fb-builder-item">
-        <div class="mb-4">
-          <label class="mb-2.5 block text-base text-black"
-            ><span>Message</span
-            ><span class="label-required pl-1 text-red-400">*</span></label
-          ><textarea
-            class="w-full rounded border border-stroke bg-white px-5 py-3 text-base text-black outline-none focus:border-primary"
-            name="text_area_252C0024-BE62-4F20-AB2C-1089A5C92984"
-            placeholder="Content Here"
-            required=""
-          ></textarea>
-        </div>
-      </div>
-      <div class="SortableItem fb-builder-item">
-        <label class="mb-2.5 block text-base text-black"
-          ><span>Upload File</span></label
-        >
-        <div id="file_upload" class="sr-only">
-          <input
-            type="file"
-            name="file_upload_E835B5F4-38FB-4157-9D61-0D9F6D4E37B2[]"
-            id="gridPreview"
-            class="sr-only"
-          />
-        </div>
-        <div
-          role="presentation"
-          tabindex="0"
-          class="formbold__dropzone flex h-[190px] w-full items-center justify-center rounded border border-dashed border-[#CAD0D9] bg-white"
-        >
-          <p class="text-center">
-            <span
-              class="mx-auto flex h-[46px] w-[46px] items-center justify-center rounded-full border border-stroke bg-[#F3F3FE]"
-              ><svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g clip-path="url(#clip0_1985_9587)">
-                  <path
-                    d="M2.5 15.8346H17.5V17.5013H2.5V15.8346ZM10.8333 4.85797V14.168H9.16667V4.85797L4.1075 9.91797L2.92917 8.73964L10 1.66797L17.0708 8.7388L15.8925 9.91714L10.8333 4.85964V4.85797Z"
-                    fill="currentColor"
-                  ></path>
-                </g>
-                <defs>
-                  <clipPath id="clip0_1985_9587">
-                    <rect width="20" height="20" fill="white"></rect>
-                  </clipPath>
-                </defs></svg></span
-            ><span class="text-xs text-body-color"
-              ><label for="gridPreview" class="cursor-pointer pr-1 text-primary"
-                >Click to upload</label
-              >or drag and drop</span
-            >
-          </p>
-        </div>
-      </div>
-    <div class="g-recaptcha" data-sitekey="6LeDGfAjAAAAADRVoRsSCGVGdP4DpyTvhWBK3je2"></div>
-    <input type="g-recaptcha" id="captchaCheckbox" />
-      <div class="btn-toolbar flex items-center space-x-3">
-        <input
-          type="submit"
-          class="inline-flex cursor-pointer items-center justify-center rounded border border-primary bg-primary px-8 py-2 text-base font-medium text-white hover:bg-opacity-90"
-          value="Submit"
-          onclick="checkCaptcha(event)"
-        />
-      </div>
-    </form>
+                <form id="contactForm" action="https://formspree.io/levibatkin1@gmail.com" method="POST">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+    
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+    
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                <div class="g-recaptcha" data-sitekey="6LfryqIoAAAAABIIp1Sxosjs_6UOn-RffAyXaMm5"></div>
+                <button type="submit">Submit</button>
+        </form>
+            </div>
+        </section>
+    </main>
   </div>
-  <link rel="stylesheet" href="https://cdn.formbold.com/dropzone.css" />
-  <script src="https://cdn.formbold.com/dropzone.js"></script>
 </div>
                                 </form>
                               </div>
@@ -223,19 +106,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
-    function checkCaptcha(event) {
-      event.preventDefault(); // Prevent the form from submitting immediately
-    
-      var response = grecaptcha.getResponse();
-    
-      if (response.length === 0) {
-        // reCaptcha not verified
-        alert("Please tick 'I'm not a robot.'");
-      } else {
-        // Proceed with form submission
-        document.getElementById("form").submit();
-      }
-    }
+        //secret: 6LfryqIoAAAAAM-eCxWA4J-Kg7ISeiW3JmnAcuxh
+        function checkCaptcha(event) {
+          event.preventDefault(); // Prevent the form from submitting immediately
+        
+          var response = grecaptcha.getResponse();
+        
+          if (response.length === 0) {
+            // reCaptcha not verified
+            alert("Please tick 'I'm not a robot.'");
+          } else {
+            // Proceed with form submission
+            document.getElementById("form").submit();
+          }
+        }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js"></script>
     <script src="/assets/js/theme.js?h=aeddb9c3ce5d77b8278c91c07acf30ad"></script>
