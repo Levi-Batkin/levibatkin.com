@@ -136,7 +136,7 @@
                 (position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
-                    locationResult.textContent = `Your location is: Latitude ${latitude}, Longitude ${longitude}`;
+                    locationResult.textContent = `Your location is: Latitude ${latitude}, Longitude ${longitude} (Approx)`;
                 },
                 (error) => {
                     locationResult.textContent = `Error: ${error.message}`;
