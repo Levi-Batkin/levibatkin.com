@@ -144,11 +144,12 @@
                     locationResult.textContent = `Your location is: Latitude ${latitude}, Longitude ${longitude} (Approx)`;
                 },
                 (error) => {
-                    locationResult.textContent = `Error: ${error.message}`;
+                    locationResult.textContent = ``;
                 }
             );
         } else {
-            locationResult.textContent = "Geolocation is not supported by your browser.";
+            // Don't display any location at all
+            locationResult.textContent = "";
         }
     </script>
     <script>
@@ -173,12 +174,12 @@
             document.querySelector(".page-content").style.display = "block";
         }, 2000);
     </script>
-            <script>
+    <script>
             document.addEventListener('DOMContentLoaded', function() {
               Notification.requestPermission()
             }
           );
-      </script>
+    </script>
 </div>
 
 </body>
