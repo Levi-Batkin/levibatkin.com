@@ -11,6 +11,7 @@ body {
     background-size: 1000% 1000%;
     animation: gradientShift 40s ease infinite;
     overflow-x: hidden;
+    touch-action: manipulation;
   }
   @keyframes gradientShift {
     0% { background-position: 0% 50%; }
@@ -92,6 +93,7 @@ body {
     user-select: none;
     font-weight: bold;
     transition: transform 0.2s;
+    touch-action: none;
   }
 
   .player:active { cursor: grabbing; transform: scale(1.1); }

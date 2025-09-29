@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Who's Most?</title>
   <link rel="apple-touch-icon" sizes="57x57" href="assets/favicons/apple-icon-57x57.png">
   <link rel="apple-touch-icon" sizes="60x60" href="assets/favicons/apple-icon-60x60.png">
@@ -22,6 +22,14 @@
   <meta name="msapplication-TileImage" content="assets/favicons/ms-icon-144x144.png">
   <meta name="theme-color" content="#ffffff">
   <link href="./assets/css/style.css" rel="stylesheet">
+
+  <style>
+    html, body { touch-action: manipulation; } /* prevent zoom */
+    .player { touch-action: none; }
+    .player.dragging { opacity: 0.6; }
+    .drag-over { outline: 2px dashed #666; }
+    .new-row-drop { padding: 10px; text-align: center; background: #f1f1f1; margin: 5px 0; cursor: pointer; }
+  </style>
 </head>
 <body>
 
@@ -32,12 +40,8 @@
   </div>
   <h2>Enter Players</h2>
   <div id="playersList">
-    <div class="playerInputWrapper">
-      <input type="text" placeholder="Player 1" class="playerInput">
-    </div>
-    <div class="playerInputWrapper">
-      <input type="text" placeholder="Player 2" class="playerInput">
-    </div>
+    <div class="playerInputWrapper"><input type="text" placeholder="Player 1" class="playerInput"></div>
+    <div class="playerInputWrapper"><input type="text" placeholder="Player 2" class="playerInput"></div>
   </div>
   <button onclick="addPlayer()">Add Player</button><br>
   <button onclick="startGame()">Start Game</button>
@@ -78,7 +82,7 @@
       <li>Have fun, don’t cheat, and respect each other’s choices.</li>
       <br>
       <p>🍻 Drinking Rules<small> (The term drink meaning a shot, sip, or whatever)</small></p>
-      <li>If you guess the question number correctly, based on the clue of question range, you can not drink or nominate someone to have a drink.</li>
+      <li>If you guess the question number correctly, based on the clue of question range, you cannot drink or nominate someone to have a drink.</li>
       <li>If you get the question wrong, and you are above the least likely, you must have two drinks.</li>
       <li>If you get the question wrong in general, you must have one drink in regards to two in question 6.</li>
       <br>
@@ -89,7 +93,7 @@
 </div>
 
 <footer>
-  <p>💖 Made with love by<a href="#">levibatkin.com</a></p>
+  <p>💖 Made with love by <a href="#">levibatkin.com</a></p>
 </footer>
 
 <script>
@@ -227,12 +231,11 @@ const rangeText = document.getElementById("rangeText");
 const hideButton = document.getElementById("hideButton");
 
 let dragged = null;
-let newRowDrop = null;
 let currentQuestion = "";
 let currentRange = "";
 let isHidden = false;
 
-// Add Player
+// --- Player Management ---
 function addPlayer() {
   const count = playersList.querySelectorAll(".playerInputWrapper").length + 1;
   const wrapper = document.createElement("div");
@@ -242,58 +245,111 @@ function addPlayer() {
   playersList.appendChild(wrapper);
 }
 
-// Remove Player
 function removePlayer(btn) {
   const allPlayers = playersList.querySelectorAll(".playerInputWrapper");
-  if(allPlayers.length <= 2) return; // Keep minimum 2
+  if(allPlayers.length <= 2) return;
   btn.parentElement.remove();
 }
 
-// Start Game
+// --- Start Game ---
 function startGame() {
   const playerInputs = document.querySelectorAll(".playerInput");
   const players = [];
   playerInputs.forEach(input => { if(input.value.trim() !== "") players.push(input.value.trim()); });
-  if(players.length<2){ alert("Please enter at least 2 players!"); return; }
+  if(players.length < 2){ alert("Please enter at least 2 players!"); return; }
 
   playersBoard.innerHTML="";
-  const topTag=document.createElement("div"); topTag.classList.add("tag"); topTag.textContent="Most Likely"; playersBoard.appendChild(topTag);
-
+  const topTag = document.createElement("div"); topTag.classList.add("tag"); topTag.textContent="Most Likely"; playersBoard.appendChild(topTag);
   const firstRow = createRow(); playersBoard.appendChild(firstRow);
 
-  players.forEach(name=>{
-    const div=document.createElement("div"); div.classList.add("player"); div.textContent=name; div.draggable=true; addDragEvents(div); firstRow.appendChild(div);
+  players.forEach(name => {
+    const div = document.createElement("div");
+    div.classList.add("player");
+    div.textContent = name;
+    addDragAndTouch(div);
+    firstRow.appendChild(div);
   });
 
-  newRowDrop=document.createElement("div"); newRowDrop.textContent="+ Drop here to create new group"; newRowDrop.classList.add("new-row-drop"); playersBoard.appendChild(newRowDrop);
+  const newRowDrop = document.createElement("div");
+  newRowDrop.classList.add("new-row-drop");
+  newRowDrop.textContent = "+ Drop here to create new group";
+  playersBoard.appendChild(newRowDrop);
 
-  newRowDrop.addEventListener("dragover",(e)=>{e.preventDefault(); newRowDrop.classList.add("drag-over");});
-  newRowDrop.addEventListener("dragleave",()=>newRowDrop.classList.remove("drag-over"));
-  newRowDrop.addEventListener("drop",(e)=>{e.preventDefault(); newRowDrop.classList.remove("drag-over"); if(dragged){ const row=createRow(); playersBoard.insertBefore(row,newRowDrop); row.appendChild(dragged); }});
+  newRowDrop.addEventListener("dragover", (e)=>{e.preventDefault(); newRowDrop.classList.add("drag-over");});
+  newRowDrop.addEventListener("dragleave", ()=>newRowDrop.classList.remove("drag-over"));
+  newRowDrop.addEventListener("drop", (e)=>{
+    e.preventDefault();
+    newRowDrop.classList.remove("drag-over");
+    if(dragged){ const row=createRow(); playersBoard.insertBefore(row,newRowDrop); row.appendChild(dragged); }
+  });
 
-  const bottomTag=document.createElement("div"); bottomTag.classList.add("tag"); bottomTag.textContent="Least Likely"; playersBoard.appendChild(bottomTag);
+  const bottomTag = document.createElement("div"); bottomTag.classList.add("tag"); bottomTag.textContent="Least Likely"; playersBoard.appendChild(bottomTag);
 
-  setupScreen.classList.add("hidden"); setTimeout(()=>gameScreen.classList.remove("hidden"),500);
+  setupScreen.classList.add("hidden"); setTimeout(()=>gameScreen.classList.remove("hidden"), 500);
 }
 
-// Drag functions
-function createRow(){
-  const row=document.createElement("div"); row.classList.add("player-row");
-  row.addEventListener("dragover",(e)=>{e.preventDefault(); row.classList.add("drag-over");});
-  row.addEventListener("dragleave",()=>row.classList.remove("drag-over"));
-  row.addEventListener("drop",(e)=>{e.preventDefault(); row.classList.remove("drag-over"); if(dragged) row.appendChild(dragged);});
+// --- Drag & Touch Functions ---
+function createRow() {
+  const row = document.createElement("div");
+  row.classList.add("player-row");
+  row.addEventListener("dragover", (e)=>{e.preventDefault(); row.classList.add("drag-over");});
+  row.addEventListener("dragleave", ()=>row.classList.remove("drag-over"));
+  row.addEventListener("drop", (e)=>{e.preventDefault(); row.classList.remove("drag-over"); if(dragged) row.appendChild(dragged);});
   return row;
 }
 
-function addDragEvents(element){
-  element.addEventListener("dragstart",()=>{dragged=element; setTimeout(()=>element.style.display="none",0);});
-  element.addEventListener("dragend",()=>{dragged=null;element.style.display="block"; document.querySelectorAll(".player,.player-row,.new-row-drop").forEach(p=>p.classList.remove("drag-over"));});
-  element.addEventListener("dragover",(e)=>{e.preventDefault(); element.classList.add("drag-over");});
-  element.addEventListener("dragleave",()=>element.classList.remove("drag-over"));
-  element.addEventListener("drop",(e)=>{e.preventDefault(); element.classList.remove("drag-over"); if(dragged && dragged!==element){const parent=element.parentNode; const children=Array.from(parent.children); const draggedIndex=children.indexOf(dragged); const droppedIndex=children.indexOf(element); if(draggedIndex<droppedIndex) parent.insertBefore(dragged,element.nextSibling); else parent.insertBefore(dragged,element);}});
+function addDragAndTouch(element) {
+  // Desktop drag
+  element.draggable = true;
+  element.addEventListener("dragstart", ()=>{ dragged=element; setTimeout(()=>element.style.display="none",0); });
+  element.addEventListener("dragend", ()=>{ dragged=null; element.style.display="block"; document.querySelectorAll(".player,.player-row,.new-row-drop").forEach(p=>p.classList.remove("drag-over")); });
+  element.addEventListener("dragover",(e)=>{ e.preventDefault(); element.classList.add("drag-over"); });
+  element.addEventListener("dragleave", ()=>element.classList.remove("drag-over"));
+  element.addEventListener("drop",(e)=>{ e.preventDefault(); element.classList.remove("drag-over"); if(dragged && dragged!==element){ const parent=element.parentNode; const children=Array.from(parent.children); const draggedIndex=children.indexOf(dragged); const droppedIndex=children.indexOf(element); if(draggedIndex<droppedIndex) parent.insertBefore(dragged, element.nextSibling); else parent.insertBefore(dragged, element); }});
+
+  // Mobile touch drag
+  let offsetX = 0, offsetY = 0, isDragging = false;
+  element.addEventListener("touchstart", (e)=>{
+    e.preventDefault();
+    isDragging = true;
+    const touch = e.touches[0];
+    const rect = element.getBoundingClientRect();
+    offsetX = touch.clientX - rect.left;
+    offsetY = touch.clientY - rect.top;
+    element.style.position = 'absolute';
+    element.style.zIndex = 1000;
+    element.classList.add('dragging');
+  });
+  element.addEventListener("touchmove", (e)=>{
+    if(!isDragging) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    element.style.left = `${touch.clientX - offsetX}px`;
+    element.style.top = `${touch.clientY - offsetY}px`;
+  });
+  element.addEventListener("touchend", ()=>{
+    isDragging = false;
+    element.style.position = '';
+    element.style.left = '';
+    element.style.top = '';
+    element.style.zIndex = '';
+    element.classList.remove('dragging');
+
+    const rows = document.querySelectorAll('.player-row');
+    rows.forEach(row => {
+      const rect = row.getBoundingClientRect();
+      const elRect = element.getBoundingClientRect();
+      if(elRect.left + elRect.width/2 > rect.left &&
+         elRect.left + elRect.width/2 < rect.right &&
+         elRect.top + elRect.height/2 > rect.top &&
+         elRect.top + elRect.height/2 < rect.bottom) {
+        row.appendChild(element);
+      }
+    });
+  });
 }
 
-// Questions & Hide
+// --- Questions & Hide ---
 function generateQuestion(){
   const randomIndex=Math.floor(Math.random()*questions.length);
   const questionNumber=randomIndex+1;
@@ -312,37 +368,11 @@ hideButton.addEventListener("click",()=>{
   rangeText.textContent=currentRange;
 });
 
-// Screens navigation
-function showQuestionsList(){
-  populateQuestions();
-  setupScreen.classList.add("fade-out");
-  setTimeout(()=>{ setupScreen.classList.add("hidden"); questionsListScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);
-}
-function showRules(){
-  setupScreen.classList.add("fade-out");
-  setTimeout(()=>{ setupScreen.classList.add("hidden"); rulesScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);
-}
-function backToSetup(){
-  [questionsListScreen, rulesScreen].forEach(screen=>{
-    if(!screen.classList.contains("hidden")){
-      screen.classList.add("fade-out");
-      setTimeout(()=>{
-        screen.classList.add("hidden");
-        screen.classList.remove("fade-out");
-        setupScreen.classList.remove("hidden");
-      },500);
-    }
-  });
-}
-function populateQuestions(){
-  questionsUl.innerHTML="";
-  questions.forEach((q,i)=>{
-    const li=document.createElement("li");
-    li.textContent=`${q}`;
-    questionsUl.appendChild(li);
-  });
-}
+// --- Navigation ---
+function showQuestionsList(){ populateQuestions(); setupScreen.classList.add("fade-out"); setTimeout(()=>{ setupScreen.classList.add("hidden"); questionsListScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);}
+function showRules(){ setupScreen.classList.add("fade-out"); setTimeout(()=>{ setupScreen.classList.add("hidden"); rulesScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);}
+function backToSetup(){ [questionsListScreen,rulesScreen].forEach(screen=>{ if(!screen.classList.contains("hidden")){ screen.classList.add("fade-out"); setTimeout(()=>{ screen.classList.add("hidden"); screen.classList.remove("fade-out"); setupScreen.classList.remove("hidden"); },500); } });}
+function populateQuestions(){ questionsUl.innerHTML=""; questions.forEach((q,i)=>{ const li=document.createElement("li"); li.textContent=`${q}`; questionsUl.appendChild(li); }); }
 </script>
-
 </body>
 </html>
