@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Who's Most?</title>
+  <link rel="apple-touch-icon" sizes="57x57" href="assets/favicons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="assets/favicons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="assets/favicons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/favicons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="assets/favicons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="assets/favicons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="assets/favicons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="assets/favicons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="assets/favicons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicons/favicon-16x16.png">
+  <link rel="manifest" href="assets/favicons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="assets/favicons/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <link href="./assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Setup Screen -->
+<div class="container" id="setupScreen">
+  <div style="text-align: center; margin-bottom: 15px;">
+    <img src="assets/logo.png" alt="Logo" style="width: 100px; height: 100px; object-fit: contain;">
+  </div>
+  <h2>Enter Players</h2>
+  <div id="playersList">
+    <div class="playerInputWrapper">
+      <input type="text" placeholder="Player 1" class="playerInput">
+    </div>
+    <div class="playerInputWrapper">
+      <input type="text" placeholder="Player 2" class="playerInput">
+    </div>
+  </div>
+  <button onclick="addPlayer()">Add Player</button><br>
+  <button onclick="startGame()">Start Game</button>
+  <button onclick="showQuestionsList()">View Questions</button>
+  <button onclick="showRules()">View Rules</button>
+</div>
+
+<!-- Game Screen -->
+<div class="container hidden" id="gameScreen">
+  <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+    <button id="hideButton">Hide Question</button>
+  </div>
+  <div class="question" id="question">Press New Question 🎲</div>
+  <button onclick="generateQuestion()">New Question</button>
+  <div class="range" id="rangeText"></div>
+  <h3>Drag players to decide order:</h3>
+  <div class="players-board" id="playersBoard"></div>
+</div>
+
+<!-- Questions List Screen -->
+<div class="container hidden" id="questionsListScreen">
+  <h2>All Questions</h2>
+  <div id="questionsListContainer">
+    <ul id="questionsUl"></ul>
+  </div>
+  <button onclick="backToSetup()">Back</button>
+</div>
+
+<!-- Rules Screen -->
+<div class="container hidden" id="rulesScreen">
+  <h2>Game Rules</h2>
+  <div id="rulesContainer">
+    <ul>
+      <p>🛡️ Main Rules</p>
+      <li>Players take turns drawing a random question.</li>
+      <li>Drag players into the Most → Least Likely order.</li>
+      <li>Players can be as likely as each other, drag them onto the game line.</li>
+      <li>Have fun, don’t cheat, and respect each other’s choices.</li>
+      <br>
+      <p>🍻 Drinking Rules<small> (The term drink meaning a shot, sip, or whatever)</small></p>
+      <li>If you guess the question number correctly, based on the clue of question range, you can not drink or nominate someone to have a drink.</li>
+      <li>If you get the question wrong, and you are above the least likely, you must have two drinks.</li>
+      <li>If you get the question wrong in general, you must have one drink in regards to two in question 6.</li>
+      <br>
+      <li>Optional: add house rules for extra chaos!</li>
+    </ul>
+  </div>
+  <button onclick="backToSetup()">Back</button>
+</div>
+
+<footer>
+  <p>💖 Made with love by<a href="#">levibatkin.com</a></p>
+</footer>
+
+<script>
+const questions = [
+    // 🥂 Party & Night Out
+    "Who’s most likely to lose their phone on a night out?",
+    "Who’s most likely to get kicked out of a club?",
+    "Who would be the first to vomit at pres?",
+    "Who’s most likely to go missing on a night out and turn up with new friends?",
+    "Who’s dancing on a table by midnight?",
+    "Who’s most likely to order shots when nobody asked for them?",
+    "Who’s texting their ex at 3am?",
+    "Who’s most likely to pull someone way out of their league?",
+    "Who’s going home with takeaway food instead of a date?",
+    "Who’s crying in the club (for literally no reason)?",
+
+    // 💻 Work & Adulting
+    "Who’s most likely to quit their job dramatically?",
+    "Who’s calling in “sick” when they’re just hungover?",
+    "Who secretly checks Indeed during work hours every day?",
+    "Who would forget to pay rent until the landlord threatens?",
+    "Who’s still living like a student even though they have a salary?",
+    "Who’s most likely to ghost their boss after getting a new job?",
+    "Who would accidentally reply-all to an email with something unhinged?",
+    "Who’s most likely to become an MLM rep?",
+    "Who’s pretending to know Excel formulas but actually Googling them?",
+    "Who would make the office printer their mortal enemy?",
+
+    // ❤ Dating & Love Life
+    "Who’s catching feelings after one date?",
+    "Who’s still hung up on their situationship from 2019?",
+    "Who would go on Love Island?",
+    "Who’s most likely to get caught on a date with someone’s ex?",
+    "Who’s falling in love with their Hinge match before meeting IRL?",
+    "Who’d send a risky DM to a celebrity?",
+    "Who’s most likely to ghost someone and then bump into them in Tesco?",
+    "Who’s still stalking their ex’s new partner on Instagram?",
+    "Who’d have the messiest breakup group chat drama?",
+    "Who’s most likely to get engaged in Vegas after 2 weeks of dating?",
+
+    // 🏠 Housemates & Living
+    "Who never replaces the toilet roll?",
+    "Who’d eat someone else’s leftovers and deny it?",
+    "Who’s most likely to have a “mystery smell” in their room?",
+    "Who never takes the bins out?",
+    "Who’s most likely to accidentally set the kitchen on fire?",
+    "Who’s living in organised chaos (but swears they know where everything is)?",
+    "Who’s borrowing clothes and never returning them?",
+    "Who’s got the loudest “adult sleepovers”?",
+    "Who would host a party on a Tuesday?",
+    "Who’s most likely to never buy communal toilet cleaner but always use it?",
+
+    // 🧠 Chaos & Personality
+    "Who’s most likely to start an argument in the group chat?",
+    "Who’s accidentally oversharing their trauma to a stranger?",
+    "Who’s getting cancelled on Twitter first?",
+    "Who would join a cult because the vibes were good?",
+    "Who’s buying crystals and insisting Mercury is in retrograde?",
+    "Who’d believe a pyramid scheme is “financial freedom”?",
+    "Who’s most likely to fight a goose unprovoked?",
+    "Who’s running away to join the circus?",
+    "Who would try to fistfight a celebrity?",
+    "Who’s crying in Tesco over the meal deal price increase?",
+
+    // 📱 Social Media & Tech
+    "Who’s still lurking on Facebook daily?",
+    "Who’s most likely to film a TikTok dance in public?",
+    "Who’s accidentally liking their ex’s post from 4 years ago?",
+    "Who’d have a secret burner account?",
+    "Who’s addicted to BeReal but always late?",
+    "Who’s starting a podcast nobody asked for?",
+    "Who’s most likely to buy a ring light and never use it?",
+    "Who’s tweeting something that gets taken wildly out of context?",
+    "Who’s pretending to be “off socials” but checks every story?",
+    "Who would get catfished the easiest?",
+
+    // 💸 Money & Chaos Spending
+    "Who’s buying festival tickets before paying rent?",
+    "Who’s most likely to blow £200 on ASOS in one sitting?",
+    "Who’s buying an air fryer and never using it?",
+    "Who’s the worst at splitting a bill fairly?",
+    "Who’d spend their last £5 on a Deliveroo?",
+    "Who’s most likely to forget their card PIN every time?",
+    "Who’s gambling on sports they don’t even watch?",
+    "Who’s buying crypto at the exact wrong time?",
+    "Who’d spend £100 on scented candles?",
+    "Who’s most likely to buy festival glitter in bulk and still use it years later?",
+
+    // ✈ Travel & Adventure
+    "Who’s most likely to miss their flight because they overslept?",
+    "Who’s going to pack 2 hours before a trip?",
+    "Who would accidentally end up in the wrong country?",
+    "Who’s most likely to “find themselves” on a yoga retreat?",
+    "Who’d be scammed by a tuk-tuk driver instantly?",
+    "Who’s most likely to lose their passport abroad?",
+    "Who’d flirt their way into free drinks in another country?",
+    "Who would accidentally join a protest while sightseeing?",
+    "Who’s most likely to buy something cursed at a souvenir shop?",
+    "Who’d turn a weekend city break into a survival story?",
+
+    // 🧃 Health, Food & Fitness
+    "Who’s most likely to join the gym and go once?",
+    "Who’s eating cereal for dinner most nights?",
+    "Who’d try a fad diet for 3 days then give up?",
+    "Who’s most likely to live off meal deals?",
+    "Who’s putting hot sauce on everything?",
+    "Who’d try dry January and fail by the 2nd?",
+    "Who’s blending spinach into smoothies just to feel better?",
+    "Who’s most likely to argue pineapple does belong on pizza?",
+    "Who’d UberEats McDonald’s at 10am?",
+    "Who’s most likely to get food poisoning abroad?",
+
+    // 🎬 Pop Culture & Random
+    "Who’s still watching kids’ cartoons unironically?",
+    "Who’d get obsessed with a conspiracy theory?",
+    "Who’s most likely to DM a celebrity something embarrassing?",
+    "Who’s binging reality TV and pretending it’s “ironic”?",
+    "Who’d try to start a pyramid scheme in The Sims?",
+    "Who’s dressing up for Comic-Con with zero shame?",
+    "Who’d join a viral TikTok challenge and regret it?",
+    "Who’s most likely to cry over a Marvel movie death?",
+    "Who’d go on a game show and immediately lose?",
+    "Who’s most likely to accidentally become a meme?"
+];
+
+const setupScreen = document.getElementById("setupScreen");
+const gameScreen = document.getElementById("gameScreen");
+const questionsListScreen = document.getElementById("questionsListScreen");
+const rulesScreen = document.getElementById("rulesScreen");
+const questionsUl = document.getElementById("questionsUl");
+const playersList = document.getElementById("playersList");
+const playersBoard = document.getElementById("playersBoard");
+const questionBox = document.getElementById("question");
+const rangeText = document.getElementById("rangeText");
+const hideButton = document.getElementById("hideButton");
+
+let dragged = null;
+let newRowDrop = null;
+let currentQuestion = "";
+let currentRange = "";
+let isHidden = false;
+
+// Add Player
+function addPlayer() {
+  const count = playersList.querySelectorAll(".playerInputWrapper").length + 1;
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("playerInputWrapper");
+  wrapper.innerHTML = `<input type="text" placeholder="Player ${count}" class="playerInput">
+                       <button class="removeBtn" onclick="removePlayer(this)">X</button>`;
+  playersList.appendChild(wrapper);
+}
+
+// Remove Player
+function removePlayer(btn) {
+  const allPlayers = playersList.querySelectorAll(".playerInputWrapper");
+  if(allPlayers.length <= 2) return; // Keep minimum 2
+  btn.parentElement.remove();
+}
+
+// Start Game
+function startGame() {
+  const playerInputs = document.querySelectorAll(".playerInput");
+  const players = [];
+  playerInputs.forEach(input => { if(input.value.trim() !== "") players.push(input.value.trim()); });
+  if(players.length<2){ alert("Please enter at least 2 players!"); return; }
+
+  playersBoard.innerHTML="";
+  const topTag=document.createElement("div"); topTag.classList.add("tag"); topTag.textContent="Most Likely"; playersBoard.appendChild(topTag);
+
+  const firstRow = createRow(); playersBoard.appendChild(firstRow);
+
+  players.forEach(name=>{
+    const div=document.createElement("div"); div.classList.add("player"); div.textContent=name; div.draggable=true; addDragEvents(div); firstRow.appendChild(div);
+  });
+
+  newRowDrop=document.createElement("div"); newRowDrop.textContent="+ Drop here to create new group"; newRowDrop.classList.add("new-row-drop"); playersBoard.appendChild(newRowDrop);
+
+  newRowDrop.addEventListener("dragover",(e)=>{e.preventDefault(); newRowDrop.classList.add("drag-over");});
+  newRowDrop.addEventListener("dragleave",()=>newRowDrop.classList.remove("drag-over"));
+  newRowDrop.addEventListener("drop",(e)=>{e.preventDefault(); newRowDrop.classList.remove("drag-over"); if(dragged){ const row=createRow(); playersBoard.insertBefore(row,newRowDrop); row.appendChild(dragged); }});
+
+  const bottomTag=document.createElement("div"); bottomTag.classList.add("tag"); bottomTag.textContent="Least Likely"; playersBoard.appendChild(bottomTag);
+
+  setupScreen.classList.add("hidden"); setTimeout(()=>gameScreen.classList.remove("hidden"),500);
+}
+
+// Drag functions
+function createRow(){
+  const row=document.createElement("div"); row.classList.add("player-row");
+  row.addEventListener("dragover",(e)=>{e.preventDefault(); row.classList.add("drag-over");});
+  row.addEventListener("dragleave",()=>row.classList.remove("drag-over"));
+  row.addEventListener("drop",(e)=>{e.preventDefault(); row.classList.remove("drag-over"); if(dragged) row.appendChild(dragged);});
+  return row;
+}
+
+function addDragEvents(element){
+  element.addEventListener("dragstart",()=>{dragged=element; setTimeout(()=>element.style.display="none",0);});
+  element.addEventListener("dragend",()=>{dragged=null;element.style.display="block"; document.querySelectorAll(".player,.player-row,.new-row-drop").forEach(p=>p.classList.remove("drag-over"));});
+  element.addEventListener("dragover",(e)=>{e.preventDefault(); element.classList.add("drag-over");});
+  element.addEventListener("dragleave",()=>element.classList.remove("drag-over"));
+  element.addEventListener("drop",(e)=>{e.preventDefault(); element.classList.remove("drag-over"); if(dragged && dragged!==element){const parent=element.parentNode; const children=Array.from(parent.children); const draggedIndex=children.indexOf(dragged); const droppedIndex=children.indexOf(element); if(draggedIndex<droppedIndex) parent.insertBefore(dragged,element.nextSibling); else parent.insertBefore(dragged,element);}});
+}
+
+// Questions & Hide
+function generateQuestion(){
+  const randomIndex=Math.floor(Math.random()*questions.length);
+  const questionNumber=randomIndex+1;
+  currentQuestion=`Q${questionNumber}: ${questions[randomIndex]}`;
+  questionBox.textContent=currentQuestion;
+  const lower=Math.floor((questionNumber-1)/5)*5+1;
+  const upper=lower+4;
+  currentRange=`This question is between ${lower} – ${upper}`;
+  rangeText.textContent=currentRange;
+  if(isHidden) questionBox.textContent="❓ Hidden Question";
+}
+
+hideButton.addEventListener("click",()=>{
+  if(!isHidden){ questionBox.textContent="❓ Hidden Question"; hideButton.textContent="Show Question"; isHidden=true; }
+  else{ questionBox.textContent=currentQuestion||"Press New Question 🎲"; hideButton.textContent="Hide Question"; isHidden=false; }
+  rangeText.textContent=currentRange;
+});
+
+// Screens navigation
+function showQuestionsList(){
+  populateQuestions();
+  setupScreen.classList.add("fade-out");
+  setTimeout(()=>{ setupScreen.classList.add("hidden"); questionsListScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);
+}
+function showRules(){
+  setupScreen.classList.add("fade-out");
+  setTimeout(()=>{ setupScreen.classList.add("hidden"); rulesScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);
+}
+function backToSetup(){
+  [questionsListScreen, rulesScreen].forEach(screen=>{
+    if(!screen.classList.contains("hidden")){
+      screen.classList.add("fade-out");
+      setTimeout(()=>{
+        screen.classList.add("hidden");
+        screen.classList.remove("fade-out");
+        setupScreen.classList.remove("hidden");
+      },500);
+    }
+  });
+}
+function populateQuestions(){
+  questionsUl.innerHTML="";
+  questions.forEach((q,i)=>{
+    const li=document.createElement("li");
+    li.textContent=`${q}`;
+    questionsUl.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>
