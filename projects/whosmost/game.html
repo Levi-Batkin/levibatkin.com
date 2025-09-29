@@ -1,102 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Who's Most?</title>
-  <link rel="apple-touch-icon" sizes="57x57" href="assets/favicons/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="assets/favicons/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="assets/favicons/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="assets/favicons/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="assets/favicons/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="assets/favicons/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="assets/favicons/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="assets/favicons/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicons/apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192"  href="assets/favicons/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/favicons/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicons/favicon-16x16.png">
-  <link rel="manifest" href="assets/favicons/manifest.json">
-  <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="assets/favicons/ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">
-  <link href="./assets/css/style.css" rel="stylesheet">
-
-  <style>
-    html, body { touch-action: manipulation; } /* prevent zoom */
-    .player { touch-action: none; }
-    .player.dragging { opacity: 0.6; }
-    .drag-over { outline: 2px dashed #666; }
-    .new-row-drop { padding: 10px; text-align: center; background: #f1f1f1; margin: 5px 0; cursor: pointer; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Who's Most?</title>
+<style>
+body { font-family: sans-serif; touch-action: manipulation; margin: 20px; }
+.hidden { display: none; }
+.container { max-width: 600px; margin: auto; }
+.player-row { border: 1px dashed #aaa; min-height: 50px; margin: 5px 0; padding: 5px; display: flex; flex-wrap: wrap; gap:5px; position: relative; }
+.player { background: #f0f0f0; padding: 5px 10px; border-radius: 5px; cursor: grab; }
+.player.dragging { opacity: 0.5; position: absolute; pointer-events: none; z-index: 1000; }
+.tag { font-weight: bold; margin: 10px 0; }
+.new-row-drop { padding: 10px; background: #eee; text-align: center; margin: 5px 0; border: 2px dashed #ccc; }
+.drag-over { outline: 2px dashed #666; }
+button { margin: 5px 0; }
+</style>
 </head>
 <body>
 
-<!-- Setup Screen -->
 <div class="container" id="setupScreen">
-  <div style="text-align: center; margin-bottom: 15px;">
-    <img src="assets/logo.png" alt="Logo" style="width: 100px; height: 100px; object-fit: contain;">
-  </div>
   <h2>Enter Players</h2>
   <div id="playersList">
     <div class="playerInputWrapper"><input type="text" placeholder="Player 1" class="playerInput"></div>
     <div class="playerInputWrapper"><input type="text" placeholder="Player 2" class="playerInput"></div>
   </div>
-  <button onclick="addPlayer()">Add Player</button><br>
+  <button onclick="addPlayer()">Add Player</button>
   <button onclick="startGame()">Start Game</button>
-  <button onclick="showQuestionsList()">View Questions</button>
-  <button onclick="showRules()">View Rules</button>
 </div>
 
-<!-- Game Screen -->
 <div class="container hidden" id="gameScreen">
-  <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-    <button id="hideButton">Hide Question</button>
-  </div>
   <div class="question" id="question">Press New Question 🎲</div>
   <button onclick="generateQuestion()">New Question</button>
-  <div class="range" id="rangeText"></div>
-  <h3>Drag players to decide order:</h3>
   <div class="players-board" id="playersBoard"></div>
 </div>
 
-<!-- Questions List Screen -->
-<div class="container hidden" id="questionsListScreen">
-  <h2>All Questions</h2>
-  <div id="questionsListContainer">
-    <ul id="questionsUl"></ul>
-  </div>
-  <button onclick="backToSetup()">Back</button>
-</div>
-
-<!-- Rules Screen -->
-<div class="container hidden" id="rulesScreen">
-  <h2>Game Rules</h2>
-  <div id="rulesContainer">
-    <ul>
-      <p>🛡️ Main Rules</p>
-      <li>Players take turns drawing a random question.</li>
-      <li>Drag players into the Most → Least Likely order.</li>
-      <li>Players can be as likely as each other, drag them onto the game line.</li>
-      <li>Have fun, don’t cheat, and respect each other’s choices.</li>
-      <br>
-      <p>🍻 Drinking Rules<small> (The term drink meaning a shot, sip, or whatever)</small></p>
-      <li>If you guess the question number correctly, based on the clue of question range, you cannot drink or nominate someone to have a drink.</li>
-      <li>If you get the question wrong, and you are above the least likely, you must have two drinks.</li>
-      <li>If you get the question wrong in general, you must have one drink in regards to two in question 6.</li>
-      <br>
-      <li>Optional: add house rules for extra chaos!</li>
-    </ul>
-  </div>
-  <button onclick="backToSetup()">Back</button>
-</div>
-
-<footer>
-  <p>💖 Made with love by <a href="#">levibatkin.com</a></p>
-</footer>
-
 <script>
+const playersList = document.getElementById("playersList");
+const playersBoard = document.getElementById("playersBoard");
+const setupScreen = document.getElementById("setupScreen");
+const gameScreen = document.getElementById("gameScreen");
+const questionBox = document.getElementById("question");
+
+let dragged = null;
+let offsetX = 0, offsetY = 0;
+let touchClone = null;
+
+// --- Player setup ---
+function addPlayer() {
+  const count = playersList.querySelectorAll(".playerInputWrapper").length + 1;
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("playerInputWrapper");
+  wrapper.innerHTML = `<input type="text" placeholder="Player ${count}" class="playerInput">
+                       <button onclick="removePlayer(this)">X</button>`;
+  playersList.appendChild(wrapper);
+}
+
+function removePlayer(btn) {
+  if(playersList.querySelectorAll(".playerInputWrapper").length <= 2) return;
+  btn.parentElement.remove();
+}
+
+// --- Start game ---
+function startGame() {
+  const inputs = document.querySelectorAll(".playerInput");
+  const players = [];
+  inputs.forEach(input => { if(input.value.trim()) players.push(input.value.trim()); });
+  if(players.length<2){ alert("Enter at least 2 players"); return; }
+
+  setupScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+
+  playersBoard.innerHTML = "";
+  const topTag = document.createElement("div"); topTag.classList.add("tag"); topTag.textContent="Most Likely"; playersBoard.appendChild(topTag);
+  const firstRow = createRow(); playersBoard.appendChild(firstRow);
+
+  players.forEach(name=>{
+    const div = document.createElement("div"); div.classList.add("player"); div.textContent=name;
+    addDragAndTouch(div);
+    firstRow.appendChild(div);
+  });
+
+  const newRowDrop = document.createElement("div");
+  newRowDrop.classList.add("new-row-drop");
+  newRowDrop.textContent="+ Drop here to create new group";
+  playersBoard.appendChild(newRowDrop);
+
+  newRowDrop.addEventListener("dragover", e=>{ e.preventDefault(); newRowDrop.classList.add("drag-over"); });
+  newRowDrop.addEventListener("dragleave", ()=>newRowDrop.classList.remove("drag-over"));
+  newRowDrop.addEventListener("drop", e=>{
+    e.preventDefault(); newRowDrop.classList.remove("drag-over");
+    if(dragged){
+      const row = createRow();
+      playersBoard.insertBefore(row, newRowDrop);
+      row.appendChild(dragged);
+    }
+  });
+
+  const bottomTag = document.createElement("div"); bottomTag.classList.add("tag"); bottomTag.textContent="Least Likely"; playersBoard.appendChild(bottomTag);
+}
+
+function createRow() {
+  const row = document.createElement("div"); row.classList.add("player-row");
+  row.addEventListener("dragover", e=>{ e.preventDefault(); row.classList.add("drag-over"); });
+  row.addEventListener("dragleave", ()=>row.classList.remove("drag-over"));
+  row.addEventListener("drop", e=>{ e.preventDefault(); row.classList.remove("drag-over"); if(dragged) row.appendChild(dragged); });
+  return row;
+}
+
+// --- Drag + Touch ---
+function addDragAndTouch(el) {
+  // desktop drag
+  el.draggable = true;
+  el.addEventListener("dragstart", ()=>{ dragged=el; setTimeout(()=>el.style.display="none",0); });
+  el.addEventListener("dragend", ()=>{ dragged=null; el.style.display="block"; });
+
+  // mobile touch drag
+  el.addEventListener("touchstart", e=>{
+    e.preventDefault();
+    dragged = el;
+    const touch = e.touches[0];
+    const rect = el.getBoundingClientRect();
+    offsetX = touch.clientX - rect.left;
+    offsetY = touch.clientY - rect.top;
+
+    // clone for dragging so original stays in row
+    touchClone = el.cloneNode(true);
+    touchClone.classList.add("dragging");
+    document.body.appendChild(touchClone);
+    moveClone(touch);
+  });
+
+  el.addEventListener("touchmove", e=>{
+    if(!touchClone) return;
+    const touch = e.touches[0];
+    moveClone(touch);
+  });
+
+  el.addEventListener("touchend", e=>{
+    if(!touchClone) return;
+    const rows = document.querySelectorAll(".player-row, .new-row-drop");
+    const rectClone = touchClone.getBoundingClientRect();
+    rows.forEach(row=>{
+      const rect = row.getBoundingClientRect();
+      if(rectClone.left+rectClone.width/2 > rect.left &&
+         rectClone.left+rectClone.width/2 < rect.right &&
+         rectClone.top+rectClone.height/2 > rect.top &&
+         rectClone.top+rectClone.height/2 < rect.bottom){
+        if(row.classList.contains("new-row-drop")){
+          const newRow = createRow();
+          playersBoard.insertBefore(newRow, row);
+          newRow.appendChild(el);
+        } else {
+          row.appendChild(el);
+        }
+      }
+    });
+    touchClone.remove();
+    touchClone=null;
+    dragged=null;
+  });
+
+  function moveClone(touch){
+    touchClone.style.left = (touch.clientX - offsetX) + "px";
+    touchClone.style.top = (touch.clientY - offsetY) + "px";
+  }
+}
+
+// --- Questions ---
 const questions = [
     // 🥂 Party & Night Out
     "Who’s most likely to lose their phone on a night out?",
@@ -217,162 +288,11 @@ const questions = [
     "Who’s most likely to cry over a Marvel movie death?",
     "Who’d go on a game show and immediately lose?",
     "Who’s most likely to accidentally become a meme?"
-];
-
-const setupScreen = document.getElementById("setupScreen");
-const gameScreen = document.getElementById("gameScreen");
-const questionsListScreen = document.getElementById("questionsListScreen");
-const rulesScreen = document.getElementById("rulesScreen");
-const questionsUl = document.getElementById("questionsUl");
-const playersList = document.getElementById("playersList");
-const playersBoard = document.getElementById("playersBoard");
-const questionBox = document.getElementById("question");
-const rangeText = document.getElementById("rangeText");
-const hideButton = document.getElementById("hideButton");
-
-let dragged = null;
-let currentQuestion = "";
-let currentRange = "";
-let isHidden = false;
-
-// --- Player Management ---
-function addPlayer() {
-  const count = playersList.querySelectorAll(".playerInputWrapper").length + 1;
-  const wrapper = document.createElement("div");
-  wrapper.classList.add("playerInputWrapper");
-  wrapper.innerHTML = `<input type="text" placeholder="Player ${count}" class="playerInput">
-                       <button class="removeBtn" onclick="removePlayer(this)">X</button>`;
-  playersList.appendChild(wrapper);
+  ];
+function generateQuestion(){ 
+  const q = questions[Math.floor(Math.random()*questions.length)]; 
+  questionBox.textContent=q; 
 }
-
-function removePlayer(btn) {
-  const allPlayers = playersList.querySelectorAll(".playerInputWrapper");
-  if(allPlayers.length <= 2) return;
-  btn.parentElement.remove();
-}
-
-// --- Start Game ---
-function startGame() {
-  const playerInputs = document.querySelectorAll(".playerInput");
-  const players = [];
-  playerInputs.forEach(input => { if(input.value.trim() !== "") players.push(input.value.trim()); });
-  if(players.length < 2){ alert("Please enter at least 2 players!"); return; }
-
-  playersBoard.innerHTML="";
-  const topTag = document.createElement("div"); topTag.classList.add("tag"); topTag.textContent="Most Likely"; playersBoard.appendChild(topTag);
-  const firstRow = createRow(); playersBoard.appendChild(firstRow);
-
-  players.forEach(name => {
-    const div = document.createElement("div");
-    div.classList.add("player");
-    div.textContent = name;
-    addDragAndTouch(div);
-    firstRow.appendChild(div);
-  });
-
-  const newRowDrop = document.createElement("div");
-  newRowDrop.classList.add("new-row-drop");
-  newRowDrop.textContent = "+ Drop here to create new group";
-  playersBoard.appendChild(newRowDrop);
-
-  newRowDrop.addEventListener("dragover", (e)=>{e.preventDefault(); newRowDrop.classList.add("drag-over");});
-  newRowDrop.addEventListener("dragleave", ()=>newRowDrop.classList.remove("drag-over"));
-  newRowDrop.addEventListener("drop", (e)=>{
-    e.preventDefault();
-    newRowDrop.classList.remove("drag-over");
-    if(dragged){ const row=createRow(); playersBoard.insertBefore(row,newRowDrop); row.appendChild(dragged); }
-  });
-
-  const bottomTag = document.createElement("div"); bottomTag.classList.add("tag"); bottomTag.textContent="Least Likely"; playersBoard.appendChild(bottomTag);
-
-  setupScreen.classList.add("hidden"); setTimeout(()=>gameScreen.classList.remove("hidden"), 500);
-}
-
-// --- Drag & Touch Functions ---
-function createRow() {
-  const row = document.createElement("div");
-  row.classList.add("player-row");
-  row.addEventListener("dragover", (e)=>{e.preventDefault(); row.classList.add("drag-over");});
-  row.addEventListener("dragleave", ()=>row.classList.remove("drag-over"));
-  row.addEventListener("drop", (e)=>{e.preventDefault(); row.classList.remove("drag-over"); if(dragged) row.appendChild(dragged);});
-  return row;
-}
-
-function addDragAndTouch(element) {
-  // Desktop drag
-  element.draggable = true;
-  element.addEventListener("dragstart", ()=>{ dragged=element; setTimeout(()=>element.style.display="none",0); });
-  element.addEventListener("dragend", ()=>{ dragged=null; element.style.display="block"; document.querySelectorAll(".player,.player-row,.new-row-drop").forEach(p=>p.classList.remove("drag-over")); });
-  element.addEventListener("dragover",(e)=>{ e.preventDefault(); element.classList.add("drag-over"); });
-  element.addEventListener("dragleave", ()=>element.classList.remove("drag-over"));
-  element.addEventListener("drop",(e)=>{ e.preventDefault(); element.classList.remove("drag-over"); if(dragged && dragged!==element){ const parent=element.parentNode; const children=Array.from(parent.children); const draggedIndex=children.indexOf(dragged); const droppedIndex=children.indexOf(element); if(draggedIndex<droppedIndex) parent.insertBefore(dragged, element.nextSibling); else parent.insertBefore(dragged, element); }});
-
-  // Mobile touch drag
-  let offsetX = 0, offsetY = 0, isDragging = false;
-  element.addEventListener("touchstart", (e)=>{
-    e.preventDefault();
-    isDragging = true;
-    const touch = e.touches[0];
-    const rect = element.getBoundingClientRect();
-    offsetX = touch.clientX - rect.left;
-    offsetY = touch.clientY - rect.top;
-    element.style.position = 'absolute';
-    element.style.zIndex = 1000;
-    element.classList.add('dragging');
-  });
-  element.addEventListener("touchmove", (e)=>{
-    if(!isDragging) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    element.style.left = `${touch.clientX - offsetX}px`;
-    element.style.top = `${touch.clientY - offsetY}px`;
-  });
-  element.addEventListener("touchend", ()=>{
-    isDragging = false;
-    element.style.position = '';
-    element.style.left = '';
-    element.style.top = '';
-    element.style.zIndex = '';
-    element.classList.remove('dragging');
-
-    const rows = document.querySelectorAll('.player-row');
-    rows.forEach(row => {
-      const rect = row.getBoundingClientRect();
-      const elRect = element.getBoundingClientRect();
-      if(elRect.left + elRect.width/2 > rect.left &&
-         elRect.left + elRect.width/2 < rect.right &&
-         elRect.top + elRect.height/2 > rect.top &&
-         elRect.top + elRect.height/2 < rect.bottom) {
-        row.appendChild(element);
-      }
-    });
-  });
-}
-
-// --- Questions & Hide ---
-function generateQuestion(){
-  const randomIndex=Math.floor(Math.random()*questions.length);
-  const questionNumber=randomIndex+1;
-  currentQuestion=`Q${questionNumber}: ${questions[randomIndex]}`;
-  questionBox.textContent=currentQuestion;
-  const lower=Math.floor((questionNumber-1)/5)*5+1;
-  const upper=lower+4;
-  currentRange=`This question is between ${lower} – ${upper}`;
-  rangeText.textContent=currentRange;
-  if(isHidden) questionBox.textContent="❓ Hidden Question";
-}
-
-hideButton.addEventListener("click",()=>{
-  if(!isHidden){ questionBox.textContent="❓ Hidden Question"; hideButton.textContent="Show Question"; isHidden=true; }
-  else{ questionBox.textContent=currentQuestion||"Press New Question 🎲"; hideButton.textContent="Hide Question"; isHidden=false; }
-  rangeText.textContent=currentRange;
-});
-
-// --- Navigation ---
-function showQuestionsList(){ populateQuestions(); setupScreen.classList.add("fade-out"); setTimeout(()=>{ setupScreen.classList.add("hidden"); questionsListScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);}
-function showRules(){ setupScreen.classList.add("fade-out"); setTimeout(()=>{ setupScreen.classList.add("hidden"); rulesScreen.classList.remove("hidden"); setupScreen.classList.remove("fade-out"); },500);}
-function backToSetup(){ [questionsListScreen,rulesScreen].forEach(screen=>{ if(!screen.classList.contains("hidden")){ screen.classList.add("fade-out"); setTimeout(()=>{ screen.classList.add("hidden"); screen.classList.remove("fade-out"); setupScreen.classList.remove("hidden"); },500); } });}
-function populateQuestions(){ questionsUl.innerHTML=""; questions.forEach((q,i)=>{ const li=document.createElement("li"); li.textContent=`${q}`; questionsUl.appendChild(li); }); }
 </script>
 </body>
 </html>
