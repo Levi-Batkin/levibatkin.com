@@ -9,7 +9,7 @@ window.LEVI_LINKS = {
   hurricaneSpotify: "https://open.spotify.com/track/1eeb7jUIsd3sb9IGByQHSU",
   hurricaneApple: "https://music.apple.com/gb/song/hurricane/1766482534",
   hurricaneYouTube: "https://youtu.be/iSHyrQoNcg4?is=S6akjdEQHle7srkE",
-  instagram: "https://www.instagram.com/levibatkin/",
+  instagram: "https://www.instagram.com/levibatkin1/",
   tiktok: "https://www.tiktok.com/@levibatkin?_r=1&_t=ZN-9BFHWK92ajW",
   spotifyArtist: "https://open.spotify.com/artist/3sMxTwxAAstugTW7tY4F7J?si=0b2CphHQS0OYszTU6et62Q&utm_source=copy-link",
   soundcloud: "https://on.soundcloud.com/jsqMD5OrdXv9yrNVAO",
